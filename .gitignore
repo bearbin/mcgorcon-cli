@@ -21,3 +21,6 @@ _testmain.go
 
 *.exe
 *.test
+
+# Exclude the compiled file itself, if it's in this folder.
+mcgorcon-cli
