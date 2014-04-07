@@ -5,7 +5,7 @@ import (
 	"code.google.com/p/gopass"
 	"flag"
 	"fmt"
-	"github.com/andrew-d/go-termutil"
+	"github.com/mattn/go-isatty"
 	"github.com/bearbin/mcgorcon"
 	"io"
 	"math/rand"
@@ -27,12 +27,15 @@ func (c *configuration) Populate() {
 }
 
 var config = configuration{}
+var term bool
 
 func init() {
 	// Seed the RNG. Only needs doing once at startup.
 	rand.Seed(time.Now().UTC().UnixNano())
 	// Get the configuration from the available configuration methods.
 	config.Populate()
+	// Test if we have a terminal or a script as input.
+	term = isatty.IsTerminal(os.Stdin.Fd())
 }
 
 func main() {
@@ -42,7 +45,7 @@ func main() {
 	client := mcgorcon.Dial(config.Host, config.Port, config.Password)
 	stdin := bufio.NewReader(os.Stdin)
 	for {
-		if termutil.Isatty(os.Stdin.Fd()) {
+		if term {
 			fmt.Print(">>> ")
 		}
 		input, err := stdin.ReadString('\n')
